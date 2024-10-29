@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="fr"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>FortifyCrypt - Chiffrez vos messages</title> 
+  <link rel="manifest" href="/manifest.json"> <!-- Balise ajoutée pour PWA --> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+  <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+            text-align: center;
+            margin: 0;
+        }
+
+        header {
+            background-color: #00796b;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #004d40;
+            padding: 10px;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #80deea;
+        }
+
+        .container {
+            display: none;
+            margin-top: 50px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 80%;
+            max-width: 700px;
+            margin: auto;
+            position: relative;
+        }
+
+        textarea, input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #00796b;
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+        .cta {
+            margin-top: 20px;
+        }
+
+        footer {
+            background-color: #00796b;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .icons {
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+            color: #4A90E2;
+            font-size: 1.5em;
+            vertical-align: middle;
+        }
+
+        .icons:hover {
+            color: #357ABD;
+        }
+    </style> 
+ </head> 
+ <body> 
+  <header> 
+   <h1>FortifyCrypt</h1> 
+   <p>Chiffrez et protégez vos messages avec FortifyCrypt</p> 
+  </header> 
+  <nav> <a href="#" onclick="afficherSection('cryptage')">Cryptage</a> <a href="#" onclick="afficherSection('aide')">Aide</a> <a href="#" onclick="afficherSection('apropos')">À propos</a> 
+  </nav> 
+  <div id="cryptage" class="container"> 
+   <h2><i class="fas fa-lock icon"></i> Entrez votre message à chiffrer</h2> <textarea id="message" rows="4" placeholder="Tapez votre message ici..."></textarea> <span class="icons" onclick="collerMessage()"><i class="fas fa-paste"></i></span> <span class="icons" onclick="copierMessage()"><i class="fas fa-copy"></i></span> 
+   <input type="number" id="key" placeholder="Entrez votre clé secrète (ex: 123)"> 
+   <br> <button onclick="chiffrer()"><i class="fas fa-shield-alt"></i> Chiffrer</button> <button onclick="dechiffrer()"><i class="fas fa-unlock-alt"></i> Déchiffrer</button> 
+   <h3>Résultat :</h3> <textarea id="resultat" rows="4" readonly placeholder="Le résultat s'affichera ici..."></textarea> <span class="icons" onclick="copierResultat()"><i class="fas fa-copy"></i></span> 
+  </div> 
+  <div id="aide" class="container"> 
+   <h2><i class="fas fa-question-circle icon"></i> Aide</h2> 
+   <p>Pour utiliser FortifyCrypt :</p> 
+   <ul style="text-align: left;"> 
+    <li>Entrez votre message dans la section cryptage</li> 
+    <li>Saisissez une clé secrète numérique</li> 
+    <li>Cliquez sur "Chiffrer" pour protéger votre message</li> 
+    <li>Pour déchiffrer un message, entrez le texte crypté et la clé utilisée pour le chiffrer</li> 
+   </ul> 
+  </div> 
+  <div id="apropos" class="container"> 
+   <h2><i class="fas fa-info-circle icon"></i> À propos</h2> 
+   <p>FortifyCrypt est un outil simple et efficace pour protéger vos messages grâce à un système de cryptage personnalisé.</p> 
+   <p>Développé en 2024 par Kpan K.Marius, FortifyCrypt vise à offrir une solution gratuite et accessible à tous ceux qui souhaitent sécuriser leurs communications.</p> 
+  </div> 
+  <footer> 
+   <p>© 2024 FortifyCrypt. Tous droits réservés.</p> 
+  </footer> 
+  <script>
+        function afficherSection(sectionId) {
+            var sections = document.querySelectorAll('.container');
+            sections.forEach(function(section) {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        afficherSection('cryptage');
+
+        function chiffrer() {
+            let message = document.getElementById("message").value;
+            let cle = parseInt(document.getElementById("key").value);
+            if (isNaN(cle)) {
+                alert("Veuillez entrer une clé valide.");
+                return;
+            }
+            let texte_chiffre = "";
+            for (let i = 0; i < message.length; i++) {
+                texte_chiffre += String.fromCharCode((message.charCodeAt(i) + cle) % 256);
+            }
+            document.getElementById("resultat").value = texte_chiffre;
+        }
+
+        function dechiffrer() {
+            let message_chiffre = document.getElementById("message").value;
+            let cle = parseInt(document.getElementById("key").value);
+            if (isNaN(cle)) {
+                alert("Veuillez entrer une clé valide.");
+                return;
+            }
+            let texte_dechiffre = "";
+            for (let i = 0; i < message_chiffre.length; i++) {
+                texte_dechiffre += String.fromCharCode((message_chiffre.charCodeAt(i) - cle + 256) % 256);
+            }
+            document.getElementById("resultat").value = texte_dechiffre;
+        }
+
+        function copierMessage() {
+            let message = document.getElementById("message");
+            message.select();
+            document.execCommand("copy");
+            alert("Message copié !");
+        }
+
+        function collerMessage() {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById("message").value = text;
+            }).catch(err => {
+                alert("Erreur de collage !");
+            });
+        }
+
+        function copierResultat() {
+            let resultat = document.getElementById("resultat");
+            resultat.select();
+            document.execCommand("copy");
+            alert("Résultat copié !");
+        }
+    </script> 
+ </body>
+  </html>
